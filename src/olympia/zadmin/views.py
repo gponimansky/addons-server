@@ -72,13 +72,6 @@ def langpacks(request):
 @admin_required
 def show_settings(request):
     settings_dict = debug.get_safe_settings()
-
-    # Retain this so that GOOGLE_ANALYTICS_CREDENTIALS variables in local
-    # settings are not exposed.
-    google_cred = 'GOOGLE_ANALYTICS_CREDENTIALS'
-    settings_dict[google_cred] = debug.cleanse_setting(
-        google_cred, getattr(settings, google_cred, {}))
-
     return render(request, 'zadmin/settings.html',
                   {'settings_dict': settings_dict, 'title': 'Settings!'})
 
@@ -116,7 +109,7 @@ def application_versions_json(request):
 
 
 @any_permission_required([amo.permissions.ADMIN,
-                          amo.permissions.REVIEWER_ADMIN_TOOLS_VIEW])
+                          amo.permissions.REVIEWS_ADMIN])
 def email_preview_csv(request, topic):
     resp = http.HttpResponse()
     resp['Content-Type'] = 'text/csv; charset=utf-8'
@@ -335,7 +328,7 @@ def email_devs(request):
 
 @any_permission_required([amo.permissions.ADMIN,
                           amo.permissions.ADMIN_TOOLS_VIEW,
-                          amo.permissions.REVIEWER_ADMIN_TOOLS_VIEW])
+                          amo.permissions.REVIEWS_ADMIN])
 def index(request):
     log = ActivityLog.objects.admin_events()[:5]
     return render(request, 'zadmin/index.html', {'log': log})

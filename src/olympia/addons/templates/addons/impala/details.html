@@ -3,7 +3,7 @@
 
 {% set is_author = request.check_ownership(addon, require_owner=False) %}
 {% set is_reviewer = action_allowed(amo.permissions.ADDONS_REVIEW) %}
-{% set is_staff = action_allowed(amo.permissions.REVIEWER_ADMIN_TOOLS_VIEW) %}
+{% set is_admin = action_allowed(amo.permissions.REVIEWS_ADMIN) %}
 
 {% block title %}{{ page_title(addon.name) }}{% endblock %}
 {% block bodyclass %}gutter addon-details {{ super() }}{% endblock %}
@@ -83,7 +83,7 @@
     {% if is_reviewer %}
       <p class="manage-button"><a href="{{ url('reviewers.review', addon.slug) }}" class="button"><span>{{ _('Add-on Review') }}</span></a></p>
     {% endif %}
-    {% if is_staff %}
+    {% if is_admin %}
       <p class="manage-button"><a href="{{ url('zadmin.addon_manage', addon.slug) }}" class="button"><span>{{ _('Admin Manage') }}</span></a></p>
     {% endif %}
   </aside>
@@ -145,14 +145,19 @@
 
 {% if addon.type != amo.ADDON_PERSONA %}
   {% set version = addon.current_version %}
+  {% if addon.type == amo.ADDON_STATICTHEME %}
+    {% set previews = version.previews.all() %}
+  {% else %}
+    {% set previews = addon.all_previews %}
+  {% endif %}
 
-  {% if addon.all_previews|length > 0 %}
+  {% if previews|length > 0 %}
     <section class="previews">
       <div class="carousel">
         <a href="#" class="control prev">&laquo;</a>
         <a href="#" class="control next">&raquo;</a>
         <ul id="preview" class="slider">
-          {%- for preview in addon.all_previews -%}
+          {%- for preview in previews -%}
             <li class="panel">
               <a class="screenshot thumbnail" rel="jquery-lightbox"
                  href="{{ preview.image_url }}" title="{{ preview.caption }}">

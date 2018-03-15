@@ -16,21 +16,25 @@ from olympia.discovery.utils import replace_extensions
 # Represents a dummy version of `olympia.discovery.data`
 def get_dummy_addons():
     return OrderedDict([
-        (18705, addon_factory(id=18705, type=amo.ADDON_PERSONA)),
-        (445852, addon_factory(id=445852, type=amo.ADDON_EXTENSION)),
-        (824288, addon_factory(id=824288, type=amo.ADDON_EXTENSION)),
-        (294291, addon_factory(id=294291, type=amo.ADDON_PERSONA)),
-        (3006, addon_factory(id=3006, type=amo.ADDON_EXTENSION)),
-        (511962, addon_factory(id=511962, type=amo.ADDON_EXTENSION)),
-        (571240, addon_factory(id=571240, type=amo.ADDON_PERSONA)),
-        # And now the china edition addons
-        (492244, addon_factory(id=492244, type=amo.ADDON_PERSONA)),
-        # (3006, addon_factory(id=3006, type=amo.ADDON_EXTENSION)),
+        (317972, addon_factory(id=317972, type=amo.ADDON_PERSONA,
+                               description=u'317972')),
+        (782160, addon_factory(id=782160, type=amo.ADDON_EXTENSION)),
+        (583250, addon_factory(id=583250, type=amo.ADDON_EXTENSION)),
+        (450148, addon_factory(id=450148, type=amo.ADDON_PERSONA)),
         (626810, addon_factory(id=626810, type=amo.ADDON_EXTENSION)),
+        (445852, addon_factory(id=445852, type=amo.ADDON_EXTENSION)),
+        (521204, addon_factory(id=521204, type=amo.ADDON_PERSONA,
+                               description=u'571240')),
+        # And now the china edition addons
+        (492244, addon_factory(id=492244, type=amo.ADDON_PERSONA,
+                               description=u'492244')),
+        (3006, addon_factory(id=3006, type=amo.ADDON_EXTENSION)),
+        # (626810, addon_factory(id=626810, type=amo.ADDON_EXTENSION)),
         (25725, addon_factory(id=25725, type=amo.ADDON_PERSONA)),
-        # (511962, addon_factory(id=511962, type=amo.ADDON_EXTENSION)),
+        (511962, addon_factory(id=511962, type=amo.ADDON_EXTENSION)),
         (287841, addon_factory(id=287841, type=amo.ADDON_EXTENSION)),
-        (153659, addon_factory(id=153659, type=amo.ADDON_PERSONA)),
+        (153659, addon_factory(id=153659, type=amo.ADDON_PERSONA,
+                               description=u'153659')),
     ])
 
 
@@ -73,7 +77,10 @@ class DiscoveryTestMixin(object):
             unicode(item.addon_name or addon.name),
             u', '.join(author.name for author in addon.listed_authors)
         ) == result['heading']
-        assert not result['description']
+        description_output = (
+            (u'<blockquote>%s</blockquote>' % addon.description)
+            if addon.description else None)
+        assert result['description'] == description_output
         assert result['addon']['theme_data'] == addon.persona.theme_data
 
 
